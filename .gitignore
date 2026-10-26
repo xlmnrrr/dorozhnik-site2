@@ -1,0 +1,4 @@
+# Локальная конфигурация MCP содержит ключ Unsplash — не публиковать
+.mcp.json
+.claude/
+node_modules/

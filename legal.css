@@ -1,0 +1,91 @@
+/* Юридические страницы ООО «ДОРОЖНИК» (политика, согласие) */
+:root {
+  --ink: #111317;
+  --graphite: #1b1e23;
+  --line-dark: #3a3f47;
+  --paper: #ffffff;
+  --mist: #f2f3f4;
+  --line: #d5d8dc;
+  --text: #1b1e23;
+  --muted: #4b525b;
+  --muted-dark: #b9bfc7;
+  --yellow: #f2b705;
+  --focus: #111317;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-top: 1rem; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--paper);
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, p, ul, ol, dl, dd { margin: 0; }
+a { color: var(--text); text-underline-offset: .2em; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
+.on-dark { --focus: var(--yellow); }
+.wrap { width: min(100% - 2 * var(--gutter), 56rem); margin-inline: auto; }
+
+.site-header { background: var(--ink); color: #fff; border-bottom: 1px solid var(--line-dark); }
+.hdr { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4.5rem; flex-wrap: wrap; padding-block: .5rem; }
+.logo { display: inline-flex; align-items: center; gap: .75rem; min-height: 3rem; color: #fff; text-decoration: none; font-weight: 800; letter-spacing: .06em; font-size: 1.15rem; }
+.logo svg { width: 2.5rem; height: 2.5rem; flex: none; }
+.back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  color: #fff;
+  font-weight: 600;
+  border: 2px solid currentColor;
+  border-radius: .75rem;
+  text-decoration: none;
+}
+.back:hover { color: var(--yellow); }
+
+main { padding-block: clamp(2rem, 6vw, 4.5rem) clamp(3rem, 8vw, 6rem); }
+h1 { font-size: clamp(1.75rem, 1.1rem + 2.6vw, 2.75rem); line-height: 1.15; letter-spacing: -.02em; font-weight: 800; text-wrap: balance; }
+.meta { margin-top: .75rem; color: var(--muted); }
+.note {
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--mist);
+  border-left: 6px solid var(--yellow);
+  border-radius: .75rem;
+  color: var(--muted);
+}
+
+.toc { margin-top: 2rem; padding: 1.25rem 1.5rem; background: var(--mist); border: 1px solid var(--line); border-radius: 1rem; }
+.toc h2 { font-size: 1.1rem; margin-bottom: .75rem; }
+.toc ol { padding-left: 1.4rem; display: grid; gap: .15rem; columns: 1; }
+@media (min-width: 40em) { .toc ol { columns: 2; column-gap: 2rem; } }
+.toc a { display: inline-block; padding-block: .15rem; }
+
+section { margin-top: 2.5rem; }
+h2 { font-size: clamp(1.25rem, 1.05rem + .8vw, 1.6rem); line-height: 1.25; font-weight: 800; margin-bottom: .75rem; }
+section p + p, section p + ul, section ul + p, section p + ol, section ol + p { margin-top: .75rem; }
+section ul, section ol { padding-left: 1.4rem; display: grid; gap: .35rem; }
+section ul { list-style: disc; }
+section ol { list-style: decimal; }
+
+dl.card { margin-top: .5rem; display: grid; gap: .35rem; padding: 1.25rem 1.5rem; background: var(--mist); border: 1px solid var(--line); border-radius: 1rem; }
+dl.card div { display: flex; flex-wrap: wrap; gap: .1rem .75rem; }
+dl.card dt { font-weight: 700; min-width: 11rem; }
+dl.card dd { margin: 0; }
+
+.site-footer { background: var(--ink); color: var(--muted-dark); padding-block: 2rem; font-size: .9rem; }
+.site-footer a { color: #fff; }
+.site-footer .wrap { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; justify-content: space-between; }
+
+@media print {
+  .site-header, .site-footer, .toc, .back { display: none; }
+  body { font-size: 11pt; }
+}

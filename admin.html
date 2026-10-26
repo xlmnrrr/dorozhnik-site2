@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' blob: data:; connect-src https://api.github.com; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="theme-color" content="#111317">
+<title>Админка — ДОРОЖНИК</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111317'/%3E%3Cpath d='M11 4 7 28M21 4l4 24' stroke='%23fff' stroke-width='2.5' fill='none'/%3E%3Cpath d='M16 6v4M16 13v5M16 21v5' stroke='%23f2b705' stroke-width='2.5'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<!-- ======================= ВХОД ======================= -->
+<section class="gate" id="gate" aria-labelledby="gate-title">
+  <form class="gate-card" id="gateForm" novalidate>
+    <h1 id="gate-title">Вход в админку</h1>
+    <p class="muted">ООО «ДОРОЖНИК» · редактирование содержимого сайта</p>
+    <div class="field">
+      <label for="gatePass">Пароль</label>
+      <input class="input" id="gatePass" type="password" autocomplete="current-password" required>
+      <p class="err" id="gateErr" role="alert" hidden></p>
+    </div>
+    <button class="btn btn-primary" type="submit">Войти</button>
+    <p class="muted small"><a href="index.html">← Вернуться на сайт</a></p>
+  </form>
+</section>
+
+<!-- ======================= ПРИЛОЖЕНИЕ ======================= -->
+<div id="app" hidden>
+  <header class="top">
+    <div class="wrap top-in">
+      <strong>ДОРОЖНИК · Админка</strong>
+      <span class="top-actions">
+        <a class="btn btn-ghost btn-sm" href="index.html" target="_blank" rel="noopener noreferrer">Открыть сайт<span class="sr"> (в новой вкладке)</span></a>
+        <button class="btn btn-ghost btn-sm" type="button" id="logoutBtn">Выйти</button>
+      </span>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card" aria-labelledby="gh-title">
+      <h2 id="gh-title">Подключение к GitHub</h2>
+      <p class="muted">Изменения сохраняются коммитом в файл <code>content.json</code> вашего репозитория. Токен хранится только в этом браузере (<code>localStorage</code>).</p>
+      <div class="grid">
+        <div class="field">
+          <label for="ghOwner">GITHUB_OWNER</label>
+          <input class="input" id="ghOwner" type="text" autocomplete="off" spellcheck="false" placeholder="например, ivanov">
+        </div>
+        <div class="field">
+          <label for="ghRepo">GITHUB_REPO</label>
+          <input class="input" id="ghRepo" type="text" autocomplete="off" spellcheck="false" placeholder="например, dorozhnik-site">
+        </div>
+        <div class="field">
+          <label for="ghBranch">Ветка</label>
+          <input class="input" id="ghBranch" type="text" autocomplete="off" spellcheck="false" placeholder="main">
+        </div>
+        <div class="field">
+          <label for="ghToken">GITHUB_TOKEN</label>
+          <input class="input" id="ghToken" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…">
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn btn-primary" type="button" id="loadBtn">Загрузить content.json</button>
+        <button class="btn btn-ghost" type="button" id="checkBtn">Проверить доступ</button>
+        <button class="btn btn-ghost" type="button" id="forgetBtn">Забыть токен</button>
+      </div>
+    </section>
+
+    <div class="status" id="status" role="status" aria-live="polite" hidden></div>
+
+    <form id="editor" class="editor" novalidate aria-label="Редактор содержимого"></form>
+  </main>
+
+  <div class="savebar" id="saveBar" hidden>
+    <div class="wrap savebar-in">
+      <span class="muted" id="dirtyNote">Нет несохранённых изменений</span>
+      <button class="btn btn-primary" type="button" id="saveBtn">Сохранить на GitHub</button>
+    </div>
+  </div>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>
