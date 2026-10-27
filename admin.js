@@ -30,24 +30,41 @@
     phone: 'Телефон', phoneHref: 'Ссылка для звонка', email: 'Email', address: 'Адрес', director: 'Директор',
     org: 'Организация', inn: 'ИНН', ogrn: 'ОГРН', photoCredit: 'Строка об источнике фото',
     map: 'Карта «Как нас найти»', locations: 'Локации (вкладки карты)', details: 'Пояснение', coords: 'Координаты',
-    chat: 'Чат-помощник', greeting: 'Приветствие', prices: 'Базовые цены калькулятора, ₽', priceNote: 'Пояснение под расчётом',
-    build: 'Строительство', repair: 'Ремонт', landscaping: 'Благоустройство', concrete: 'Бетон'
+    chat: 'Чат-помощник', greeting: 'Приветствие', prices: 'Базовые цены калькулятора, ₽ за единицу', priceNote: 'Пояснение под расчётом',
+    units: 'Единицы измерения в калькуляторе',
+    build: 'Строительство', repair: 'Ремонт', landscaping: 'Благоустройство', concrete: 'Бетон',
+    portfolio: 'Наши объекты (до / после)', hint: 'Подсказка на слайдере', before: 'Фото «до»', after: 'Фото «после»',
+    fleet: 'Парк техники', kind: 'Силуэт техники', specs: 'Характеристики',
+    licenses: 'Лицензии и СРО', link: 'Ссылка (необязательно)'
   };
   var HELP = {
     phoneHref: 'Формат: tel:+73472465226 (без пробелов и скобок).',
     coords: 'Необязательно. Формат «широта, долгота», например 54.735152, 55.958736 (в Яндекс Картах: правый клик по точке → «Что здесь?»). Пусто — точку найдёт поиск по адресу.',
-    build: 'Целое число, рублей. Калькулятор в чате суммирует выбранные услуги и пишет «Примерная стоимость: от X рублей».',
+    build: 'Целое число, рублей за единицу (кв.м., для бетона — куб.м.). Чат умножает ставку на площадь: «Примерная стоимость для 500 кв.м.: от 500 000 ₽».',
+    units: 'Как подписывать объём в чате, например «кв.м.» или «куб.м.».',
+    kind: 'truck — самосвал, roller — каток, paver — асфальтоукладчик. Если добавить фото, оно заменит силуэт.',
+    link: 'Полный адрес, начинается с https://. Пусто — карточка без ссылки.',
+    before: 'Фото «до» и «после» лучше снимать с одной точки и в одном кадре — так слайдер показывает разницу нагляднее.',
     value: 'Для режима «лет опыта» укажите год основания (например, 1999).',
     mode: 'static — как написано; count — анимированный счётчик; since — сколько лет прошло с указанного года.',
     layout: 'big — крупная карточка с фото, wide — широкая, normal — обычная, dark — тёмная.',
     task: 'Какую задачу подставить в форму при клике на ссылку карточки.',
     photoCredit: 'Текст «Фотографии: Unsplash» — требование лицензии Unsplash; не удаляйте, пока используете эти фото.'
   };
+  // Подсказки для конкретного места в content.json (номера элементов опущены); важнее HELP по имени поля
+  var HELP_PATH = {
+    'chat.units.build': 'Подпись единицы в чате, например «кв.м.».',
+    'chat.units.repair': '', 'chat.units.landscaping': '',
+    'chat.units.concrete': 'Для бетона обычно «куб.м.».',
+    'fleet.items.specs.value': 'Например: «до 25 т», «6×4».',
+    'fleet.items.specs.label': ''
+  };
   var ENUMS = {
     layout: [['big', 'Крупная (big)'], ['wide', 'Широкая (wide)'], ['normal', 'Обычная (normal)'], ['dark', 'Тёмная (dark)']],
     task: [['build', 'Строительство дороги'], ['repair', 'Ремонт дороги'], ['landscaping', 'Благоустройство'], ['concrete', 'Поставка бетона'], ['other', 'Другое']],
     mode: [['static', 'static — как написано'], ['count', 'count — счётчик'], ['since', 'since — лет с года']],
-    icon: ['road', 'wrench', 'landscape', 'cube', 'plant', 'shield', 'doc', 'scales', 'layers', 'clock'].map(function (n) { return [n, n]; })
+    icon: ['road', 'wrench', 'landscape', 'cube', 'plant', 'shield', 'doc', 'scales', 'layers', 'clock', 'search', 'check'].map(function (n) { return [n, n]; }),
+    kind: [['truck', 'Самосвал (truck)'], ['roller', 'Каток (roller)'], ['paver', 'Асфальтоукладчик (paver)']]
   };
   var LONG_KEYS = { lead: 1, text: 1, a: 1, greeting: 1, priceNote: 1 };
 
@@ -332,7 +349,7 @@
     if (Array.isArray(value)) return renderArray(value, key, path, bare);
     if (isImage(value)) return renderImage(value, parent, key, path);
     if (isObj(value)) return renderObject(value, key, path, bare);
-    return renderPrimitive(value, parent, key);
+    return renderPrimitive(value, parent, key, path);
   }
 
   function renderObject(obj, key, path, bare) {
@@ -343,7 +360,7 @@
     Object.keys(obj).forEach(function (k) {
       box.appendChild(renderValue(obj[k], obj, k, path + '.' + k, false));
     });
-    if (/^(services|advantages)\.items\.\d+$/.test(path) && !obj.image) {
+    if (/^(services|advantages|fleet)\.items\.\d+$/.test(path) && !obj.image) {
       var add = el('button', { 'class': 'btn btn-ghost btn-sm', type: 'button', text: '+ Добавить фото' });
       add.addEventListener('click', function () {
         obj.image = { src: '', alt: '', width: 0, height: 0, credit: '' };
@@ -359,7 +376,7 @@
     box.replaceWith(fresh);
   }
 
-  function renderPrimitive(value, parent, key) {
+  function renderPrimitive(value, parent, key, path) {
     var id = 'f' + (++uid);
     var wrap = el('div', { 'class': 'field' });
     var input;
@@ -391,7 +408,9 @@
       }
       wrap.appendChild(input);
     }
-    if (HELP[key]) wrap.appendChild(el('p', { 'class': 'help', text: HELP[key] }));
+    var where = String(path || '').replace(/\.\d+/g, '');
+    var help = HELP_PATH.hasOwnProperty(where) ? HELP_PATH[where] : HELP[key];
+    if (help) wrap.appendChild(el('p', { 'class': 'help', text: help }));
     return wrap;
   }
 

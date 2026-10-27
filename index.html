@@ -43,41 +43,190 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": ["LocalBusiness", "GeneralContractor"],
-  "name": "ООО «ДОРОЖНИК»",
-  "legalName": "Общество с ограниченной ответственностью «ДОРОЖНИК»",
-  "description": "Строительство и ремонт дорог, благоустройство территорий, собственное производство и поставка бетона. Работа по контрактам 44-ФЗ и 223-ФЗ.",
-  "foundingDate": "1999",
-  "taxID": "0278062761",
-  "identifier": {
-    "@type": "PropertyValue",
-    "propertyID": "ОГРН",
-    "value": "1030204609600"
-  },
-  "telephone": "+7-347-246-52-26",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "ул. Кольцевая, д. 51",
-    "addressLocality": "Уфа",
-    "postalCode": "450112",
-    "addressCountry": "RU"
-  },
-  "areaServed": { "@type": "City", "name": "Уфа" },
-  "employee": {
-    "@type": "Person",
-    "name": "Ульянов Максим Владимирович",
-    "jobTitle": "Директор"
-  },
-  "hasOfferCatalog": {
-    "@type": "OfferCatalog",
-    "name": "Услуги",
-    "itemListElement": [
-      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Строительство дорог" } },
-      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Ремонт дорог" } },
-      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Благоустройство территорий" } },
-      { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Бетон собственного производства" } }
-    ]
-  }
+  "@graph": [
+    {
+      "@type": [
+        "LocalBusiness",
+        "GeneralContractor"
+      ],
+      "@id": "#org",
+      "name": "ООО «ДОРОЖНИК»",
+      "legalName": "Общество с ограниченной ответственностью «ДОРОЖНИК»",
+      "description": "Строительство и ремонт дорог, благоустройство территорий, собственное производство и поставка бетона. Работа по контрактам 44-ФЗ и 223-ФЗ.",
+      "foundingDate": "1999",
+      "taxID": "0278062761",
+      "identifier": {
+        "@type": "PropertyValue",
+        "propertyID": "ОГРН",
+        "value": "1030204609600"
+      },
+      "telephone": "+7-347-246-52-26",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "ул. Кольцевая, д. 51",
+        "addressLocality": "Уфа",
+        "postalCode": "450112",
+        "addressCountry": "RU"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 54.823284,
+        "longitude": 56.076586
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Уфа"
+      },
+      "employee": {
+        "@type": "Person",
+        "name": "Ульянов Максим Владимирович",
+        "jobTitle": "Директор"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Услуги",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@id": "#svc-build"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@id": "#svc-repair"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@id": "#svc-landscaping"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@id": "#svc-concrete"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "#svc-build",
+      "name": "Строительство дорог",
+      "serviceType": "Строительство автомобильных дорог",
+      "description": "Новые дороги, проезды и площадки: земляные работы, основание, дорожная одежда, покрытие и водоотвод.",
+      "provider": {
+        "@id": "#org"
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Уфа"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "#svc-repair",
+      "name": "Ремонт дорог",
+      "serviceType": "Ремонт автомобильных дорог",
+      "description": "Ямочный и капитальный ремонт, фрезерование, новый слой покрытия, восстановление разметки и бордюров.",
+      "provider": {
+        "@id": "#org"
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Уфа"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "#svc-landscaping",
+      "name": "Благоустройство территорий",
+      "serviceType": "Благоустройство",
+      "description": "Тротуары, парковки, придомовые и общественные территории.",
+      "provider": {
+        "@id": "#org"
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Уфа"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "#svc-concrete",
+      "name": "Поставка бетона",
+      "serviceType": "Поставка бетона собственного производства",
+      "description": "Бетон с собственного завода с доставкой на объект.",
+      "provider": {
+        "@id": "#org"
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Уфа"
+      }
+    }
+  ]
+}
+</script>
+<!-- Вопросы и ответы: при загрузке content.json блок обновляется из него (правки в админке попадают и сюда) -->
+<script type="application/ld+json" id="ldFaq">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Вы работаете по 44-ФЗ и 223-ФЗ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Да. Мы исполняем контракты по 44-ФЗ и 223-ФЗ — всего 98 исполненных государственных контрактов с 1999 года. Гарантийные обязательства фиксируются условиями контракта."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Как подтвердить допуск и квалификацию?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "По запросу предоставим выписку из реестра СРО, копии лицензий и список исполненных контрактов. Оставьте заявку или позвоните — подготовим комплект документов под вашу закупку."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Бетон — ваш собственный или привозной?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "У нас собственное производство бетона. Это позволяет контролировать качество и сроки поставки на объекты и отгружать бетон сторонним заказчикам."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Какие сроки выполнения работ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Сроки зависят от объёма, вида работ и условий контракта или технического задания. После оценки объекта мы называем реалистичный график и придерживаемся его."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Можно ли заказать только ремонт или только поставку бетона?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Да. Можно заказать отдельную услугу — строительство, ремонт, благоустройство или поставку бетона — либо весь цикл работ у одного подрядчика."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Как получить расчёт стоимости?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Заполните форму на этой странице или позвоните нам. Мы уточним задачу, оценим объём работ и направим предложение."
+      }
+    }
+  ]
 }
 </script>
 
@@ -112,6 +261,7 @@
   --ease: cubic-bezier(.2, .7, .2, 1);
   --ease-out: cubic-bezier(.16, 1, .3, 1);
   --cookie-h: 0px;
+  --mcta-h: 0px;
 }
 
 /* ==========================================================================
@@ -452,6 +602,12 @@ h3 {
 }
 @media (min-width: 60em) and (max-width: 74.99em) {
   .hdr-phone { display: none; }
+  /* шесть пунктов меню и кнопка помещаются в одну строку и на 960 px */
+  .nav-panel { gap: .75rem; }
+  .nav-panel ul { gap: 0; }
+  .nav-panel nav a { padding: 0 .5rem; font-size: .9rem; }
+  .nav-panel nav a::after { left: .5rem; right: .5rem; }
+  .nav-panel .btn { padding-inline: 1.1rem; }
 }
 
 /* ==========================================================================
@@ -982,8 +1138,8 @@ select.input {
 .contact-item { display: grid; grid-template-columns: 2.5rem 1fr; gap: 1rem; align-items: start; }
 .contact-item[hidden] { display: none; }
 .contact-item svg { width: 2.5rem; height: 2.5rem; padding: .55rem; background: var(--ink); color: var(--yellow); border-radius: .7rem; }
-.contact-item dt { font-size: .85rem; font-weight: 600; color: var(--muted); }
-.contact-item dd { font-weight: 600; font-size: 1.1rem; }
+.contact-item .ct { display: block; font-size: .85rem; font-weight: 600; color: var(--muted); }
+.contact-item .cd { display: block; font-weight: 600; font-size: 1.1rem; }
 .contact-item a { text-decoration: none; display: inline-flex; align-items: center; min-height: 2.75rem; }
 .contact-item a:hover { text-decoration: underline; text-underline-offset: .2em; }
 .contact-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
@@ -1315,7 +1471,8 @@ html:not(.js) .chat { display: none; }
   line-height: 1.1;
   box-shadow: 0 14px 34px -10px rgba(0,0,0,.55), 0 0 0 1px rgba(17,19,23,.1);
   cursor: pointer;
-  transform: translateY(calc(-1 * var(--cookie-h)));
+  /* подъём над cookie-баннером и мобильной панелью — трансформацией, без сдвига макета */
+  transform: translateY(calc(-1 * max(var(--cookie-h), var(--mcta-h))));
   transition: transform .45s var(--ease-out), translate .35s var(--ease-out), box-shadow .25s var(--ease), background-color .2s var(--ease);
 }
 .chat-fab:hover { background: var(--yellow-hover); box-shadow: 0 18px 40px -10px rgba(242,183,5,.55), 0 0 0 1px rgba(17,19,23,.1); }
@@ -1362,12 +1519,12 @@ html:not(.js) .chat { display: none; }
   overflow: hidden;
   transform-origin: 100% 100%;
   opacity: 0;
-  transform: translateY(calc(-1 * var(--cookie-h))) translateY(1rem) scale(.94);
+  transform: translateY(calc(-1 * max(var(--cookie-h), var(--mcta-h)))) translateY(1rem) scale(.94);
   transition: opacity .28s var(--ease), transform .45s var(--ease-out);
   --focus: var(--ink);
 }
 .chat-panel[hidden] { display: none; }
-.chat-panel.is-open { opacity: 1; transform: translateY(calc(-1 * var(--cookie-h))); }
+.chat-panel.is-open { opacity: 1; transform: translateY(calc(-1 * max(var(--cookie-h), var(--mcta-h)))); }
 .chat-head {
   display: flex;
   align-items: center;
@@ -1569,6 +1726,366 @@ html:not(.js) .chat { display: none; }
 .js .reveal .eyebrow::before { transform: scaleX(0); transform-origin: left; transition: transform .8s var(--ease-out) .25s; }
 .js .reveal.in .eyebrow::before { transform: none; }
 
+/* ==========================================================================
+   Наши объекты: слайдер «до / после»
+   ========================================================================== */
+.cases { display: grid; gap: clamp(1rem, 2vw, 1.5rem); }
+.case {
+  display: grid;
+  align-content: start;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: translate .35s var(--ease-out), box-shadow .35s var(--ease-out);
+}
+.case:hover { translate: 0 -4px; box-shadow: 0 22px 44px -26px rgba(17,19,23,.45); }
+.case-body { display: grid; gap: .75rem; padding: clamp(1.2rem, 2.4vw, 1.75rem); }
+.case-body p { color: var(--muted); }
+.ba {
+  --pos: 50%;
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--line);
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: ew-resize;
+}
+.ba img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.ba-after { clip-path: inset(0 0 0 var(--pos)); }
+.ba-tag {
+  position: absolute;
+  top: .75rem;
+  padding: .25rem .7rem;
+  border-radius: 999px;
+  background: rgba(17,19,23,.78);
+  color: #fff;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.ba-tag-before { left: .75rem; }
+.ba-tag-after { right: .75rem; background: var(--yellow); color: var(--ink); }
+.ba-line {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: var(--pos);
+  width: 3px;
+  margin-left: -1.5px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(17,19,23,.25), 0 0 18px rgba(0,0,0,.35);
+  pointer-events: none;
+}
+.ba-knob {
+  position: absolute;
+  top: 50%; left: 50%;
+  display: grid;
+  place-items: center;
+  width: 2.9rem; height: 2.9rem;
+  margin: -1.45rem 0 0 -1.45rem;
+  border-radius: 50%;
+  background: var(--yellow);
+  color: var(--ink);
+  box-shadow: 0 8px 22px rgba(0,0,0,.35);
+  transition: transform .25s var(--ease-out);
+}
+.ba-knob svg { width: 1.5rem; height: 1.5rem; }
+.ba.is-drag .ba-knob, .ba:hover .ba-knob { transform: scale(1.08); }
+.ba-range { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; pointer-events: none; }
+.ba:focus-within { outline: 3px solid var(--focus); outline-offset: -3px; }
+.ba-hint { font-size: .85rem; font-weight: 600; color: var(--muted); }
+@media (min-width: 48em) { .cases { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* ==========================================================================
+   Парк техники
+   ========================================================================== */
+.fleet { display: grid; gap: clamp(1rem, 2vw, 1.5rem); }
+.fleet-card {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+  padding: clamp(1.2rem, 2.4vw, 1.75rem);
+  background: var(--mist);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  transition: translate .35s var(--ease-out), box-shadow .35s var(--ease-out);
+}
+.fleet-card:hover { translate: 0 -4px; box-shadow: 0 22px 44px -26px rgba(17,19,23,.45); }
+.fleet-card p { color: var(--muted); }
+.fleet-art {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  border-radius: .9rem;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 80% at 50% 110%, rgba(242,183,5,.28), transparent 60%),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 2px, transparent 2px 40px),
+    var(--graphite);
+  color: var(--yellow);
+}
+.fleet-art svg { width: 78%; height: auto; filter: drop-shadow(0 14px 18px rgba(0,0,0,.45)); transition: transform .6s var(--ease-out); }
+.fleet-card:hover .fleet-art svg { transform: translateX(4%); }
+.fleet-art img { width: 100%; height: 100%; object-fit: cover; }
+.specs { display: grid; gap: .1rem; }
+.specs div { display: flex; justify-content: space-between; gap: 1rem; padding-block: .5rem; border-bottom: 1px dashed var(--field-border); }
+.specs dt { color: var(--muted); }
+.specs dd { font-weight: 700; text-align: right; }
+.fleet-foot { display: flex; justify-content: flex-start; margin-top: clamp(1.25rem, 2.5vw, 2rem); }
+@media (min-width: 48em) { .fleet { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* ==========================================================================
+   Лицензии и СРО
+   ========================================================================== */
+.lic-sec { padding-block: clamp(3rem, 6vw, 5rem); }
+.lic-grid { display: grid; gap: clamp(.9rem, 1.6vw, 1.25rem); }
+.lic {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  gap: 1rem;
+  align-items: start;
+  padding: clamp(1.1rem, 2vw, 1.5rem);
+  background: var(--graphite-2);
+  border: 1px solid var(--line-dark);
+  border-radius: var(--radius);
+}
+.lic-badge {
+  display: grid;
+  place-items: center;
+  width: 3.5rem; height: 3.5rem;
+  border-radius: 50%;
+  background: conic-gradient(from 210deg, var(--yellow), #ffd76a, #ff9a1f, var(--yellow));
+  color: var(--ink);
+  box-shadow: 0 0 0 4px rgba(242,183,5,.16);
+}
+.lic-badge svg { width: 1.6rem; height: 1.6rem; }
+.lic h3 { font-size: 1.2rem; }
+.lic p { margin-top: .3rem; color: var(--muted-dark); font-size: .95rem; }
+.lic-link { display: inline-flex; align-items: center; gap: .4rem; min-height: 2.75rem; color: #fff; font-weight: 700; text-underline-offset: .2em; }
+.lic-link:hover { color: var(--yellow); }
+.lic-link svg { width: 1rem; height: 1rem; }
+@media (min-width: 40em) { .lic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 72em) { .lic-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* поле «Комментарий» в форме заявки */
+textarea.input { min-height: 6rem; resize: vertical; line-height: 1.5; }
+
+/* калькулятор в чате: площадь */
+.calc-field { position: relative; display: block; }
+.calc-input {
+  width: 100%;
+  min-height: 2.9rem;
+  padding: .55rem 4.5rem .55rem .9rem;
+  border: 1.5px solid var(--field-border);
+  border-radius: .75rem;
+  background: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  -moz-appearance: textfield;
+}
+.calc-input::-webkit-outer-spin-button, .calc-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.calc-input:focus-visible { outline: 3px solid var(--ink); outline-offset: 1px; border-color: var(--ink); }
+.calc-unit { position: absolute; right: .9rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-weight: 600; pointer-events: none; }
+.calc-hint { font-size: .85rem; color: var(--muted); }
+.calc-hint.is-err { color: var(--error); font-weight: 600; }
+.calc-presets { display: flex; flex-wrap: wrap; gap: .4rem; }
+.calc-chip {
+  min-height: 2.5rem;
+  padding: .3rem .9rem;
+  border: 1.5px solid var(--field-border);
+  border-radius: 999px;
+  background: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color .2s var(--ease), background-color .2s var(--ease);
+}
+.calc-chip:hover { border-color: var(--ink); background: var(--mist); }
+.calc-chip[disabled], .calc-input[disabled] { opacity: .65; cursor: default; }
+
+/* ==========================================================================
+   Дизайн-слой: типографика, рамки, наклон, шум, курсор
+   ========================================================================== */
+/* градиентный акцент «с 1999 года» */
+.hero h1 .accent {
+  background: linear-gradient(100deg, #f2b705 0%, #ffe08a 28%, #ff9f1c 55%, #f2b705 80%, #ffe08a 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .hero h1 .accent { animation: shimmer 7s linear infinite; }
+}
+@keyframes shimmer { to { background-position: -220% 0; } }
+
+/* Split text: буквы выезжают снизу, слова не разрываются */
+.split .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .1em; margin-bottom: -.1em; }
+.split .ch {
+  display: inline-block;
+  transform: translateY(105%);
+  transition: transform .9s var(--ease-out) calc(var(--i, 0) * 22ms + .05s);
+}
+.split .unit { display: inline-block; transform: translateY(105%); transition: transform 1s var(--ease-out) calc(var(--i, 0) * 22ms + .1s); }
+.in .split .ch, .split.in .ch, .in .split .unit, .split.in .unit { transform: none; }
+
+/* градиентная рамка: к подсветке за курсором добавляется вращающийся отлив */
+@property --ang { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.spot::before {
+  background:
+    radial-gradient(16rem circle at var(--sx, 50%) var(--sy, 50%), rgba(255,214,102,1), rgba(242,183,5,.55) 35%, transparent 70%),
+    conic-gradient(from var(--ang), rgba(242,183,5,0) 0deg, rgba(242,183,5,.45) 70deg, rgba(255,140,30,.35) 140deg, rgba(242,183,5,0) 220deg);
+}
+@media (hover: hover) and (pointer: fine) {
+  .spot:hover::before { animation: ang 4s linear infinite; }
+}
+@keyframes ang { to { --ang: 360deg; } }
+
+/* 3D-наклон карточек за курсором (только мышь) */
+.js [data-tilt].reveal.in.is-tilt {
+  transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform .18s ease-out, translate .35s var(--ease-out), box-shadow .35s var(--ease-out);
+}
+.js [data-tilt].reveal.in.is-untilt { transition: transform .7s var(--ease-out), translate .35s var(--ease-out), box-shadow .35s var(--ease-out); }
+
+/* лёгкий шум поверх сайта — фактура «бумаги»; двигается только трансформацией */
+body::after {
+  content: none;
+  position: fixed;
+  inset: -10%;
+  z-index: 80;
+  pointer-events: none;
+  opacity: .055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 1.4 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+@media (hover: hover) and (pointer: fine) {
+  body::after { content: ""; }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  body::after { will-change: transform; animation: grain 1s steps(8) infinite; }
+}
+@keyframes grain {
+  0% { transform: translate(0, 0); } 12% { transform: translate(-4%, -6%); } 25% { transform: translate(6%, 2%); }
+  37% { transform: translate(-7%, 5%); } 50% { transform: translate(3%, -7%); } 62% { transform: translate(-2%, 7%); }
+  75% { transform: translate(7%, -3%); } 87% { transform: translate(-5%, 3%); } 100% { transform: translate(0, 0); }
+}
+
+/* кастомный курсор: точка с инерцией и кольцо «Смотреть» */
+.cursor, .cursor-ring { position: fixed; top: 0; left: 0; z-index: 96; pointer-events: none; opacity: 0; transition: opacity .3s var(--ease); }
+.has-cursor .cursor.is-on, .has-cursor .cursor-ring.is-on { opacity: 1; }
+.cursor { width: .5rem; height: .5rem; margin: -.25rem 0 0 -.25rem; border-radius: 50%; background: var(--yellow); }
+.cursor-ring {
+  display: grid;
+  place-items: center;
+  width: 2.5rem; height: 2.5rem;
+  margin: -1.25rem 0 0 -1.25rem;
+  border: 1.5px solid rgba(242,183,5,.75);
+  border-radius: 50%;
+}
+.cursor-ring span {
+  position: relative;
+  z-index: 1;
+  scale: .4;
+  opacity: 0;
+  color: var(--ink);
+  font-size: .82rem;
+  font-weight: 800;
+  letter-spacing: .02em;
+  white-space: nowrap;
+  transition: opacity .25s var(--ease), scale .35s var(--ease-out);
+}
+.cursor-ring i { position: absolute; inset: 0; border-radius: 50%; transition: scale .4s var(--ease-out), background-color .3s var(--ease); scale: 1; }
+.cursor-ring.is-link i { scale: 1.45; }
+.cursor-ring.is-view { border-color: transparent; }
+.cursor-ring.is-view i { scale: 2.3; background: var(--yellow); }
+.cursor-ring.is-view span { scale: 1; opacity: 1; }
+.cursor-ring.is-down i { scale: .8; }
+.has-cursor, .has-cursor a, .has-cursor button, .has-cursor summary, .has-cursor label, .has-cursor .ba { cursor: none; }
+.has-cursor input, .has-cursor textarea, .has-cursor select, .has-cursor .map-view, .has-cursor .chat-panel, .has-cursor dialog { cursor: auto; }
+.has-cursor .chat-panel button, .has-cursor dialog a, .has-cursor dialog button { cursor: pointer; }
+
+/* ==========================================================================
+   Главный экран: прелоадер 3D, «жидкий металл» без WebGL, снимок кадра
+   ========================================================================== */
+.hero-preload { display: none; }
+.fx-full .hero-stage { position: relative; }
+.fx-full .hero-preload {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1.1rem;
+  transition: opacity .6s var(--ease), visibility 0s linear .6s;
+}
+.fx-ready .hero-preload, .fx-done .hero-preload { opacity: 0; visibility: hidden; }
+.hero-preload svg { width: 3.5rem; height: 3.5rem; animation: bob 2.4s var(--ease) infinite; }
+.pl-road { position: relative; width: 11rem; height: 4px; border-radius: 2px; background: rgba(255,255,255,.12); overflow: hidden; }
+.pl-road i {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(90deg, var(--yellow) 0 1.1rem, transparent 1.1rem 1.8rem);
+  transform-origin: left;
+  animation: pl-fill 2.2s var(--ease-out) infinite;
+}
+.pl-label { font-size: .78rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted-dark); }
+@keyframes pl-fill { 0% { transform: scaleX(0); } 70%, 100% { transform: scaleX(1); } 100% { opacity: .2; } }
+
+.hero-fx::before {
+  content: "";
+  position: absolute;
+  inset: -25%;
+  z-index: 1;
+  background:
+    radial-gradient(32% 28% at 68% 34%, rgba(242,183,5,.2), transparent 70%),
+    radial-gradient(30% 26% at 36% 64%, rgba(130,160,210,.14), transparent 70%),
+    radial-gradient(26% 24% at 82% 74%, rgba(255,150,40,.12), transparent 70%);
+  transition: opacity 1.2s var(--ease);
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .hero-fx::before { animation: metal 22s ease-in-out infinite alternate; }
+}
+.fx-ready .hero-fx::before { opacity: 0; }
+@keyframes metal { 0% { transform: translate3d(-4%, -2%, 0) rotate(0deg) scale(1); } 100% { transform: translate3d(5%, 3%, 0) rotate(8deg) scale(1.08); } }
+.hero-scrim { z-index: 2; }
+.hero-snap { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* ==========================================================================
+   Мобильная панель «Позвонить / Оставить заявку»
+   ========================================================================== */
+.m-cta { display: none; }
+@media (max-width: 59.99em) {
+  .m-cta {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 54;
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: .6rem;
+    padding: .6rem max(var(--gutter), env(safe-area-inset-right)) calc(.6rem + env(safe-area-inset-bottom)) max(var(--gutter), env(safe-area-inset-left));
+    background: rgba(17,19,23,.94);
+    border-top: 1px solid var(--line-dark);
+    color: #fff;
+    --focus: var(--yellow);
+    transition: transform .35s var(--ease-out), visibility 0s linear 0s;
+  }
+  .m-cta .btn { min-height: 3rem; padding: .6rem 1rem; }
+  .m-cta.is-hidden, .chat-open .m-cta { transform: translateY(110%); visibility: hidden; transition: transform .35s var(--ease-out), visibility 0s linear .35s; }
+  .site-footer { padding-bottom: calc(6.5rem + var(--mcta-h)); }
+}
+@supports (backdrop-filter: blur(1px)) {
+  @media (max-width: 59.99em) { .m-cta { background: rgba(17,19,23,.82); backdrop-filter: blur(12px); } }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .split .ch, .split .unit { transform: none; }
+  .hero h1 .accent, .hero-fx::before, .pl-road i, .hero-preload svg { animation: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: .01ms !important;
@@ -1611,8 +2128,9 @@ html:not(.js) .chat { display: none; }
       <nav aria-label="Основная навигация">
         <ul>
           <li><a href="#services">Услуги</a></li>
+          <li><a href="#portfolio">Объекты</a></li>
+          <li><a href="#fleet">Техника</a></li>
           <li><a href="#advantages">Преимущества</a></li>
-          <li><a href="#numbers">Цифры</a></li>
           <li><a href="#faq">Вопросы</a></li>
           <li><a href="#contacts">Контакты</a></li>
         </ul>
@@ -1664,7 +2182,9 @@ html:not(.js) .chat { display: none; }
     </div>
 
     <div class="hero-aside">
-      <div class="hero-stage" id="heroStage" aria-hidden="true"></div>
+      <div class="hero-stage" id="heroStage" aria-hidden="true">
+        <div class="hero-preload"><svg viewBox="0 0 40 40" width="40" height="40" focusable="false"><rect width="40" height="40" rx="9" fill="#f2b705"/><path d="M14 6 8 34M26 6l6 28" stroke="#111317" stroke-width="3.2" stroke-linecap="round" fill="none"/><path d="M20 8v6M20 17v7M20 27v7" stroke="#111317" stroke-width="3.2" stroke-linecap="round" fill="none"/></svg><span class="pl-road"><i></i></span><span class="pl-label">Загружаем 3D-сцену</span></div>
+      </div>
       <figure class="hero-visual" id="heroVisual">
         <div class="tilt" id="heroTilt">
           <img id="heroImg" src="assets/images/hero-asphalt-paver.webp" width="1600" height="1067" fetchpriority="high" decoding="async" alt="Дорожный каток уплотняет свежеуложенное асфальтобетонное покрытие">
@@ -1692,6 +2212,18 @@ html:not(.js) .chat { display: none; }
   </div>
 </section>
 
+<!-- ======================= НАШИ ОБЪЕКТЫ ======================= -->
+<section class="section mist" id="portfolio" data-dyn aria-labelledby="portfolio-title">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow" data-bind="portfolio.eyebrow"></p>
+      <h2 id="portfolio-title" data-bind="portfolio.title"></h2>
+      <p class="lead" data-bind="portfolio.lead"></p>
+    </div>
+    <div class="cases" id="casesList"></div>
+  </div>
+</section>
+
 <!-- ======================= ПРЕИМУЩЕСТВА ======================= -->
 <section class="section dark" id="advantages" data-dyn aria-labelledby="adv-title">
   <div class="wrap">
@@ -1705,6 +2237,33 @@ html:not(.js) .chat { display: none; }
       <p data-bind="advantages.note.text"></p>
       <a class="btn btn-primary magnetic" href="#request" data-bind="advantages.note.button"></a>
     </div>
+  </div>
+</section>
+
+<!-- ======================= ПАРК ТЕХНИКИ ======================= -->
+<section class="section" id="fleet" data-dyn aria-labelledby="fleet-title">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow" data-bind="fleet.eyebrow"></p>
+      <h2 id="fleet-title" data-bind="fleet.title"></h2>
+      <p class="lead" data-bind="fleet.lead"></p>
+    </div>
+    <div class="fleet" id="fleetList"></div>
+    <div class="fleet-foot reveal">
+      <a class="btn btn-primary magnetic" href="#request" data-bind="fleet.button">Обсудить объект</a>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= ЛИЦЕНЗИИ И СРО ======================= -->
+<section class="section dark lic-sec" id="licenses" data-dyn aria-labelledby="lic-title">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow" data-bind="licenses.eyebrow"></p>
+      <h2 id="lic-title" data-bind="licenses.title"></h2>
+      <p class="lead" data-bind="licenses.lead"></p>
+    </div>
+    <ul class="lic-grid" id="licList"></ul>
   </div>
 </section>
 
@@ -1774,6 +2333,11 @@ html:not(.js) .chat { display: none; }
           <p class="err" id="e-task" hidden></p>
         </div>
 
+        <div class="field" data-field="comment">
+          <label for="f-comment">Комментарий <span class="opt">(необязательно)</span></label>
+          <textarea class="input" id="f-comment" name="comment" rows="3" maxlength="1000" placeholder="Адрес объекта, объём работ, сроки"></textarea>
+        </div>
+
         <!-- Honeypot: скрыт от людей, заполняется ботами -->
         <div class="hp" aria-hidden="true">
           <label for="f-website">Не заполняйте это поле</label>
@@ -1828,24 +2392,24 @@ html:not(.js) .chat { display: none; }
 
     <div class="contacts-grid">
       <div class="contact-card spot reveal">
-        <dl class="contact-list">
-          <div class="contact-item">
+        <ul class="contact-list">
+          <li class="contact-item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>
-            <div><dt>Телефон</dt><dd><a href="tel:+73472465226" data-bind="contacts.phone" data-bind-href="contacts.phoneHref">+7 (347) 246-52-26</a></dd></div>
-          </div>
-          <div class="contact-item">
+            <div><span class="ct">Телефон</span><span class="cd"><a href="tel:+73472465226" data-bind="contacts.phone" data-bind-href="contacts.phoneHref">+7 (347) 246-52-26</a></span></div>
+          </li>
+          <li class="contact-item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 6h18v12H3zM3 7l9 7 9-7"/></svg>
-            <div><dt>Email</dt><dd><a href="#" id="contactEmail" data-bind="contacts.email" data-optional></a></dd></div>
-          </div>
-          <div class="contact-item">
+            <div><span class="ct">Email</span><span class="cd"><a href="#" id="contactEmail" data-bind="contacts.email" data-optional></a></span></div>
+          </li>
+          <li class="contact-item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
-            <div><dt>Адрес</dt><dd data-bind="contacts.address"></dd></div>
-          </div>
-          <div class="contact-item">
+            <div><span class="ct">Адрес</span><span class="cd" data-bind="contacts.address"></span></div>
+          </li>
+          <li class="contact-item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
-            <div><dt>Директор</dt><dd data-bind="contacts.director"></dd></div>
-          </div>
-        </dl>
+            <div><span class="ct">Директор</span><span class="cd" data-bind="contacts.director"></span></div>
+          </li>
+        </ul>
         <div class="contact-actions">
           <a class="btn btn-primary magnetic" href="#request">Оставить заявку</a>
           <a class="btn btn-ghost" href="#map">Как добраться</a>
@@ -1897,6 +2461,9 @@ html:not(.js) .chat { display: none; }
       <div class="footer-col">
         <strong>Разделы</strong>
         <a href="#services">Услуги</a>
+        <a href="#portfolio">Наши объекты</a>
+        <a href="#fleet">Парк техники</a>
+        <a href="#licenses">Лицензии и СРО</a>
         <a href="#advantages">Преимущества</a>
         <a href="#faq">Вопросы и ответы</a>
         <a href="#contacts">Контакты</a>
@@ -1940,6 +2507,12 @@ html:not(.js) .chat { display: none; }
     <button class="btn btn-primary" type="button" data-close>Понятно</button>
   </div>
 </dialog>
+
+<!-- ======================= МОБИЛЬНАЯ ПАНЕЛЬ СВЯЗИ ======================= -->
+<div class="m-cta" id="mCta" role="region" aria-label="Быстрая связь">
+  <a class="btn btn-ghost" href="tel:+73472465226" data-bind-href="contacts.phoneHref"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Позвонить</a>
+  <a class="btn btn-primary" href="#request">Оставить заявку</a>
+</div>
 
 <!-- ======================= ЧАТ-ПОМОЩНИК ======================= -->
 <div class="chat" id="chat">
@@ -1999,11 +2572,12 @@ html:not(.js) .chat { display: none; }
     FORM_TIMEOUT_MS: 15000,
     // Ключ «JavaScript API и HTTP Геокодер» из кабинета developer.tech.yandex.ru.
     // Пусто = вместо интерактивной карты показывается карточка с адресом и ссылкой на Яндекс Карты.
-    YANDEX_MAPS_API_KEY: '',
+    YANDEX_MAPS_API_KEY: '03963500-6766-4943-9d6f-2fb1964b2d1e',
     // Числовой ID счётчика Яндекс.Метрики. Пусто = счётчик не загружается.
     ANALYTICS_COUNTER_ID: '',
     // После закрытия окон документов и cookie-баннера плавно прокручивать страницу в самый верх.
-    SCROLL_TOP_ON_MODAL_CLOSE: true,
+    // false — страница остаётся на месте, фокус возвращается на кнопку, открывшую окно.
+    SCROLL_TOP_ON_MODAL_CLOSE: false,
     CONSENT_KEY: 'dorozhnik_cookie_consent_v1',
     CONTENT_URL: 'content.json',
     CONTENT_TIMEOUT_MS: 8000
@@ -2013,6 +2587,7 @@ html:not(.js) .chat { display: none; }
   var root = doc.documentElement;
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var coarsePointer = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  var finePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   function $(sel, ctx) { return (ctx || doc).querySelector(sel); }
   function $$(sel, ctx) { return Array.prototype.slice.call((ctx || doc).querySelectorAll(sel)); }
@@ -2081,10 +2656,53 @@ html:not(.js) .chat { display: none; }
     layers:    ['M12 3 3 8l9 5 9-5zM3 13l9 5 9-5'],
     clock:     ['M3 12a9 9 0 1 0 18 0 9 9 0 1 0-18 0', 'M12 7v5l3 2'],
     pin:       ['M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z', 'M9.5 9.5a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0'],
-    external:  ['M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5']
+    external:  ['M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5'],
+    search:    ['M4 10.5a6.5 6.5 0 1 0 13 0 6.5 6.5 0 1 0-13 0', 'm15.5 15.5 5 5'],
+    arrows:    ['M9 7 4 12l5 5M15 7l5 5-5 5']
+  };
+  // Силуэты техники для карточек «Наш парк» (viewBox 0 0 120 64), [тег, атрибуты]
+  var FLEET_ART = {
+    truck: [
+      ['path', { d: 'M6 13h64l-4 25H9z', fill: 'currentColor' }],
+      ['path', { d: 'M15 16v19M25 16v19M35 16v19M45 16v19M55 16v19', stroke: '#111317', 'stroke-opacity': '.3', 'stroke-width': '1.8' }],
+      ['path', { d: 'M7 13.5h63', stroke: '#ffe08a', 'stroke-width': '1.4' }],
+      ['path', { d: 'M71 40 68 24', stroke: '#c9ced4', 'stroke-width': '2.4', 'stroke-linecap': 'round' }],
+      ['path', { d: 'M74 17h20l9 13v10H74z', fill: 'currentColor' }],
+      ['path', { d: 'M78 20h13l6 9H78z', fill: '#1b1e23' }],
+      ['rect', { x: 5, y: 38, width: 101, height: 5, rx: 1.5, fill: '#2a2e35' }],
+      ['rect', { x: 101, y: 33, width: 5, height: 4, rx: 1, fill: '#fff4df' }],
+      ['circle', { cx: 22, cy: 47, r: 8, fill: '#15171a' }], ['circle', { cx: 22, cy: 47, r: 3.2, fill: '#9aa1aa' }],
+      ['circle', { cx: 39, cy: 47, r: 8, fill: '#15171a' }], ['circle', { cx: 39, cy: 47, r: 3.2, fill: '#9aa1aa' }],
+      ['circle', { cx: 92, cy: 47, r: 8, fill: '#15171a' }], ['circle', { cx: 92, cy: 47, r: 3.2, fill: '#9aa1aa' }]
+    ],
+    roller: [
+      ['circle', { cx: 90, cy: 45, r: 14, fill: '#2a2e35' }], ['circle', { cx: 90, cy: 45, r: 10, fill: 'currentColor' }],
+      ['circle', { cx: 90, cy: 45, r: 3, fill: '#15171a' }],
+      ['circle', { cx: 28, cy: 48, r: 11, fill: '#15171a' }], ['circle', { cx: 28, cy: 48, r: 4, fill: '#9aa1aa' }],
+      ['path', { d: 'M14 40V30l8-6h44l8 6h10v10z', fill: 'currentColor' }],
+      ['path', { d: 'M41 24V9M63 24V9', stroke: '#2a2e35', 'stroke-width': '3' }],
+      ['rect', { x: 37, y: 5, width: 30, height: 4.5, rx: 1.2, fill: 'currentColor' }],
+      ['rect', { x: 47, y: 16, width: 10, height: 8, rx: 1, fill: '#1b1e23' }],
+      ['rect', { x: 76, y: 30, width: 7, height: 3, rx: 1, fill: '#fff4df' }]
+    ],
+    paver: [
+      ['rect', { x: 78, y: 51, width: 40, height: 4, fill: '#0b0c0e' }],
+      ['rect', { x: 16, y: 42, width: 62, height: 12, rx: 6, fill: '#15171a' }],
+      ['circle', { cx: 23, cy: 48, r: 3.5, fill: '#5a6068' }], ['circle', { cx: 37, cy: 48, r: 3.5, fill: '#5a6068' }],
+      ['circle', { cx: 51, cy: 48, r: 3.5, fill: '#5a6068' }], ['circle', { cx: 65, cy: 48, r: 3.5, fill: '#5a6068' }],
+      ['path', { d: 'M3 24l17 5v13H5z', fill: 'currentColor' }],
+      ['rect', { x: 20, y: 28, width: 58, height: 14, rx: 2, fill: 'currentColor' }],
+      ['rect', { x: 28, y: 18, width: 22, height: 10, rx: 2, fill: 'currentColor' }],
+      ['path', { d: 'M58 28V9M80 40V9', stroke: '#2a2e35', 'stroke-width': '2.4' }],
+      ['rect', { x: 54, y: 6, width: 30, height: 4, rx: 1.2, fill: 'currentColor' }],
+      ['rect', { x: 62, y: 20, width: 9, height: 8, rx: 1, fill: '#1b1e23' }],
+      ['rect', { x: 76, y: 38, width: 30, height: 9, rx: 1.5, fill: '#2a2e35' }],
+      ['path', { d: 'M76 39.5h30', stroke: 'currentColor', 'stroke-width': '2' }]
+    ]
   };
   var LAYOUTS = { big: 'card-big', wide: 'card-wide', dark: 'card-dark', normal: '' };
   var RE_SAFE_HREF = /^(https?:|tel:|mailto:)/i;
+  var RE_HTTPS = /^https:\/\/[^\s"<>]+$/i;
 
   // Типографика: неразрывный пробел перед тире и после коротких слов («с 1999», «и поставляем»)
   var RE_SHORT = /(^|[\s(«„"])([а-яёА-ЯЁ]{1,2}) (?=\S)/g;
@@ -2170,10 +2788,13 @@ html:not(.js) .chat { display: none; }
   /* ------------------------------------------------------------------
      Отрисовка секций
      ------------------------------------------------------------------ */
+  // Текст меняется, только если отличается: иначе браузер перерисовывает уже показанный
+  // заголовок (лишний кандидат LCP и возможный перенос строк на первом экране)
+  function setText(n, v) { if (n.textContent !== v) n.textContent = v; }
   function bindStatic(data) {
     $$('[data-bind]').forEach(function (n) {
       var v = str(get(data, n.getAttribute('data-bind')));
-      if (v) { n.textContent = typo(v); return; }
+      if (v) { setText(n, typo(v)); return; }
       if (n.hasAttribute('data-optional')) {
         var item = n.closest('.contact-item');
         if (item) item.hidden = true;
@@ -2191,7 +2812,8 @@ html:not(.js) .chat { display: none; }
   function renderHero(h) {
     var proof = $('#heroProof');
     var items = list(h.proof);
-    if (items.length) {
+    var same = items.length === proof.children.length && items.every(function (t, i) { return proof.children[i].textContent === typo(str(t)); });
+    if (items.length && !same) {
       proof.textContent = '';
       items.forEach(function (t) {
         proof.appendChild(el('li', null, [icon('check', { sw: 2.2 }), str(t)]));
@@ -2228,7 +2850,9 @@ html:not(.js) .chat { display: none; }
       kids.push(el('a', { 'class': 'card-link', href: '#request', 'data-task': str(it.task) || null }, [str(it.linkText), icon('arrow', { sw: 2 })]));
       grid.appendChild(el('article', {
         'class': ('card spot reveal ' + LAYOUTS[layout] + (im ? ' has-media' : '')).trim(),
-        style: delay(i)
+        style: delay(i),
+        'data-tilt': '',
+        'data-cursor': 'Смотреть'
       }, kids));
     });
     var cta = s.cta || {};
@@ -2309,6 +2933,252 @@ html:not(.js) .chat { display: none; }
         el('div', { 'class': 'faq-body' }, [el('p', { text: str(it.a) })])
       ]));
     });
+  }
+
+  /* ------------------------------------------------------------------
+     Наши объекты: карточки со слайдером «до / после»
+     ------------------------------------------------------------------ */
+  function hideIfEmpty(id, items) {
+    var sec = doc.getElementById(id);
+    if (sec) sec.hidden = !items.length;
+    return items.length > 0;
+  }
+
+  function renderPortfolio(p) {
+    var box = $('#casesList');
+    box.textContent = '';
+    var items = list(p.items).filter(function (it) { return it && (imgEl(it.before) || imgEl(it.after)); });
+    if (!hideIfEmpty('portfolio', items)) return;
+    items.forEach(function (it, i) {
+      var title = str(it.title);
+      var before = imgEl(it.before, true);
+      var after = imgEl(it.after, true);
+      var media;
+      if (before && after) {
+        before.classList.add('ba-before');
+        after.classList.add('ba-after');
+        var range = el('input', {
+          type: 'range', min: '0', max: '100', step: '1', value: '50', 'class': 'ba-range',
+          'aria-label': 'Сравнение «до» и «после»: ' + title
+        });
+        media = el('div', { 'class': 'ba', 'data-cursor': 'Тяните' }, [
+          before,
+          after,
+          el('span', { 'class': 'ba-tag ba-tag-before', 'aria-hidden': 'true', text: 'До' }),
+          el('span', { 'class': 'ba-tag ba-tag-after', 'aria-hidden': 'true', text: 'После' }),
+          el('span', { 'class': 'ba-line', 'aria-hidden': 'true' }, [el('span', { 'class': 'ba-knob' }, [icon('arrows', { sw: 2.4 })])]),
+          range
+        ]);
+      } else {
+        media = el('div', { 'class': 'card-media' }, [before || after]);
+      }
+      var tags = list(it.tags);
+      box.appendChild(el('article', { 'class': 'case spot reveal', style: delay(i) }, [
+        media,
+        el('div', { 'class': 'case-body' }, [
+          el('h3', { text: title }),
+          str(it.text) ? el('p', { text: str(it.text) }) : null,
+          tags.length ? el('ul', { 'class': 'card-tags', 'aria-label': 'Виды работ' }, tags.map(function (t) { return el('li', { text: str(t) }); })) : null,
+          before && after && str(p.hint) ? el('p', { 'class': 'ba-hint', 'aria-hidden': 'true', text: '← ' + str(p.hint) + ' →' }) : null
+        ])
+      ]));
+    });
+    $$('.ba', box).forEach(initCompare);
+  }
+
+  // Слайдер: мышь — сразу, палец — после явного горизонтального движения (вертикальный свайп прокручивает страницу),
+  // клавиатура и скринридеры — через скрытый input[type=range]
+  function initCompare(ba) {
+    var range = $('.ba-range', ba);
+    var touched = false;
+    var drag = null;
+    function set(v) {
+      v = Math.max(0, Math.min(100, v));
+      ba.style.setProperty('--pos', v.toFixed(2) + '%');
+      range.value = String(Math.round(v));
+      range.setAttribute('aria-valuetext', 'Граница на ' + Math.round(v) + '%: слева «до», справа «после»');
+    }
+    function fromEvent(e) {
+      var r = ba.getBoundingClientRect();
+      set(((e.clientX - r.left) / r.width) * 100);
+    }
+    ba.addEventListener('pointerdown', function (e) {
+      if (e.button !== 0) return;
+      touched = true;
+      drag = { id: e.pointerId, x: e.clientX, y: e.clientY, on: e.pointerType === 'mouse' };
+      if (drag.on) {
+        try { ba.setPointerCapture(e.pointerId); } catch (err) { /* указатель уже отпущен */ }
+        ba.classList.add('is-drag');
+        fromEvent(e);
+        e.preventDefault();
+      }
+    });
+    ba.addEventListener('pointermove', function (e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      if (!drag.on) {
+        var dx = Math.abs(e.clientX - drag.x);
+        if (dx < 6 || dx < Math.abs(e.clientY - drag.y)) return;
+        drag.on = true;
+        try { ba.setPointerCapture(e.pointerId); } catch (err) { /* указатель уже отпущен */ }
+        ba.classList.add('is-drag');
+      }
+      fromEvent(e);
+    });
+    function stop() { drag = null; ba.classList.remove('is-drag'); }
+    ba.addEventListener('pointerup', stop);
+    ba.addEventListener('pointercancel', stop);
+    range.addEventListener('input', function () { touched = true; set(Number(range.value)); });
+    set(50);
+
+    // подсказка при первом показе: граница «покачивается»
+    if (reduceMotion || !('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) return;
+      io.disconnect();
+      window.setTimeout(function () {
+        if (touched) return;
+        var t0 = 0;
+        var step = function (ts) {
+          if (touched) return;
+          if (!t0) t0 = ts;
+          var k = Math.min(1, (ts - t0) / 1800);
+          set(50 + Math.sin(k * Math.PI * 2) * 18 * (1 - k * 0.4) * (k < 1 ? 1 : 0));
+          if (k < 1) window.requestAnimationFrame(step);
+        };
+        window.requestAnimationFrame(step);
+      }, 500);
+    }, { threshold: 0.6 });
+    io.observe(ba);
+  }
+
+  /* ------------------------------------------------------------------
+     Парк техники и лицензии
+     ------------------------------------------------------------------ */
+  function fleetArt(kind) {
+    var spec = FLEET_ART[kind] || FLEET_ART.truck;
+    var svg = doc.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 120 64');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('focusable', 'false');
+    spec.forEach(function (part) {
+      var n = doc.createElementNS(SVG_NS, part[0]);
+      Object.keys(part[1]).forEach(function (k) { n.setAttribute(k, String(part[1][k])); });
+      svg.appendChild(n);
+    });
+    return svg;
+  }
+
+  function renderFleet(f) {
+    var box = $('#fleetList');
+    box.textContent = '';
+    var items = list(f.items).filter(function (it) { return it && str(it.title); });
+    if (!hideIfEmpty('fleet', items)) return;
+    items.forEach(function (it, i) {
+      var photo = imgEl(it.image, true);
+      var specs = list(it.specs).filter(function (sp) { return sp && str(sp.label) && str(sp.value); });
+      box.appendChild(el('article', { 'class': 'fleet-card spot reveal', style: delay(i), 'data-tilt': '', 'data-cursor': 'Смотреть' }, [
+        el('div', { 'class': 'fleet-art' }, [photo || fleetArt(str(it.kind))]),
+        el('h3', { text: str(it.title) }),
+        str(it.text) ? el('p', { text: str(it.text) }) : null,
+        specs.length ? el('dl', { 'class': 'specs' }, specs.map(function (sp) {
+          return el('div', null, [el('dt', { text: str(sp.label) }), el('dd', { text: str(sp.value) })]);
+        })) : null
+      ]));
+    });
+  }
+
+  function renderLicenses(l) {
+    var box = $('#licList');
+    box.textContent = '';
+    var items = list(l.items).filter(function (it) { return it && str(it.title); });
+    if (!hideIfEmpty('licenses', items)) return;
+    items.forEach(function (it, i) {
+      var href = str(it.link).trim();
+      box.appendChild(el('li', { 'class': 'lic spot reveal', style: delay(i) }, [
+        el('span', { 'class': 'lic-badge', 'aria-hidden': 'true' }, [icon(str(it.icon)) || icon('shield')]),
+        el('div', null, [
+          el('h3', { text: str(it.title) }),
+          str(it.text) ? el('p', { text: str(it.text) }) : null,
+          RE_HTTPS.test(href) ? newTabLink('lic-link', href, str(it.linkText) || 'Подробнее') : null
+        ])
+      ]));
+    });
+  }
+
+  // Микроразметка FAQPage — из того же content.json, что и видимый блок
+  function renderFaqLd(f) {
+    var node = $('#ldFaq');
+    var items = list(f.items).filter(function (it) { return it && str(it.q) && str(it.a); });
+    if (!node || !items.length) return;
+    node.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: items.map(function (it) {
+        return { '@type': 'Question', name: str(it.q), acceptedAnswer: { '@type': 'Answer', text: str(it.a) } };
+      })
+    });
+  }
+
+  /* ------------------------------------------------------------------
+     Split text: заголовки появляются по буквам (слова не разрываются).
+     Экранный диктор читает aria-label с цельным текстом.
+     Только на компьютере с мышью: на телефоне заголовки видны сразу (LCP, плавность).
+     ------------------------------------------------------------------ */
+  function splitText(node) {
+    if (!node || node.classList.contains('split')) return;
+    var label = node.textContent.replace(/\s+/g, ' ').trim();
+    if (!label) return;
+    var n = 0;
+    var frag = doc.createDocumentFragment();
+    function words(text, parent) {
+      text.split(/( +)/).forEach(function (part) {
+        if (!part) return;
+        if (/^ +$/.test(part)) { parent.appendChild(doc.createTextNode(' ')); return; }
+        var w = doc.createElement('span');
+        w.className = 'w';
+        Array.from(part).forEach(function (c) {
+          var ch = doc.createElement('span');
+          ch.className = 'ch';
+          ch.style.setProperty('--i', String(Math.min(n++, 48)));
+          ch.textContent = c;
+          w.appendChild(ch);
+        });
+        parent.appendChild(w);
+      });
+    }
+    Array.prototype.slice.call(node.childNodes).forEach(function (kid) {
+      if (kid.nodeType === 3) { words(kid.textContent, frag); return; }
+      if (kid.nodeType !== 1) return;
+      if (kid.classList.contains('accent')) {
+        // градиентный акцент выезжает целиком — так перелив градиента не дробится по буквам
+        var w = doc.createElement('span');
+        w.className = 'w';
+        kid.classList.add('unit');
+        kid.style.setProperty('--i', String(Math.min(n, 48)));
+        n += 4;
+        w.appendChild(kid);
+        frag.appendChild(w);
+        return;
+      }
+      var shell = kid.cloneNode(false);
+      words(kid.textContent, shell);
+      frag.appendChild(shell);
+    });
+    node.textContent = '';
+    node.appendChild(frag);
+    node.setAttribute('aria-label', label);
+    Array.prototype.forEach.call(node.children, function (c) { c.setAttribute('aria-hidden', 'true'); });
+    node.classList.add('split');
+  }
+  function splitHeadings() {
+    // на телефонах заголовки не дробятся: тысячи span'ов дорого обходятся отрисовке
+    if (reduceMotion || !finePointer || !('IntersectionObserver' in window)) return;
+    $$('.section-head h2').forEach(splitText);
+    var h1 = $('#hero-title');
+    if (h1) {
+      splitText(h1);
+      window.requestAnimationFrame(function () { window.requestAnimationFrame(function () { h1.classList.add('in'); }); });
+    }
   }
 
   /* ------------------------------------------------------------------
@@ -2489,11 +3359,16 @@ html:not(.js) .chat { display: none; }
     bindStatic(data);
     renderHero(data.hero || {});
     renderServices(data.services || {});
+    renderPortfolio(data.portfolio || {});
     renderAdvantages(data.advantages || {});
+    renderFleet(data.fleet || {});
+    renderLicenses(data.licenses || {});
     renderStats(data.stats || {});
     renderRequest(data.request || {});
     renderFaq(data.faq || {});
+    renderFaqLd(data.faq || {});
     renderMap(data.map || {});
+    splitHeadings();
   }
 
   /* ------------------------------------------------------------------
@@ -2828,6 +3703,7 @@ html:not(.js) .chat { display: none; }
   var submitBtn = $('#submitBtn');
   var submitLabel = $('.btn-label', submitBtn);
   var taskSelect = $('#f-task');
+  var commentField = $('#f-comment');
   var sending = false;
 
   function prefillTask(v) {
@@ -2837,6 +3713,11 @@ html:not(.js) .chat { display: none; }
       clearError('task');
     }
     return known;
+  }
+  // Расчёт из чата — первой строкой комментария; прежний расчёт заменяется, текст клиента остаётся
+  function prefillComment(text) {
+    var rest = commentField.value.split('\n').filter(function (line) { return line.trim() && !/^Расчёт в чате:/.test(line); });
+    commentField.value = [str(text)].concat(rest).join('\n').slice(0, 1000);
   }
   // Предзаполнение «Задачи» по клику на карточки услуг (карточки строятся из JSON, поэтому делегирование)
   doc.addEventListener('click', function (e) {
@@ -3029,6 +3910,7 @@ html:not(.js) .chat { display: none; }
       email: RULES.email.el.value.trim(),
       task: taskSelect.value,
       taskLabel: opt ? opt.text : '',
+      comment: commentField.value.trim().slice(0, 1000),
       consent: true,
       consentAt: new Date().toISOString(),
       page: window.location.href,
@@ -3059,6 +3941,28 @@ html:not(.js) .chat { display: none; }
   });
 
   /* ------------------------------------------------------------------
+     Мобильная панель «Позвонить / Оставить заявку»: прячется у формы
+     и при открытом чате; её высота поднимает кнопку чата (--mcta-h)
+     ------------------------------------------------------------------ */
+  var mCta = $('#mCta');
+  var ctaMq = window.matchMedia('(max-width: 59.99em)');
+  function syncCta() {
+    var on = ctaMq.matches && !mCta.classList.contains('is-hidden') && !root.classList.contains('chat-open');
+    root.style.setProperty('--mcta-h', on ? mCta.offsetHeight + 'px' : '0px');
+  }
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      mCta.classList.toggle('is-hidden', entries[entries.length - 1].isIntersecting);
+      syncCta();
+    }, { rootMargin: '0px 0px -30% 0px' }).observe($('#request'));
+  }
+  if ('ResizeObserver' in window) new window.ResizeObserver(syncCta).observe(mCta);
+  if ('MutationObserver' in window) new MutationObserver(syncCta).observe(root, { attributes: true, attributeFilter: ['class'] });
+  if (ctaMq.addEventListener) ctaMq.addEventListener('change', syncCta);
+  else if (ctaMq.addListener) ctaMq.addListener(syncCta);
+  syncCta();
+
+  /* ------------------------------------------------------------------
      Мост для чат-помощника и эффектов (assets/js/*.js)
      ------------------------------------------------------------------ */
   var contentSettled = false;
@@ -3069,6 +3973,7 @@ html:not(.js) .chat { display: none; }
     scrollToId: scrollToId,
     scrollToTop: scrollToTop,
     prefillTask: prefillTask,
+    prefillComment: prefillComment,
     onContent: function (cb) {
       if (contentSettled) cb(window.DZ.content);
       else contentWaiters.push(cb);

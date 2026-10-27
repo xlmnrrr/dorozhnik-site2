@@ -1,6 +1,6 @@
 /* ==========================================================================
    Чат-помощник ООО «ДОРОЖНИК»
-   Сценарии на кнопках, калькулятор стоимости и поиск по разделу «Вопросы и ответы».
+   Сценарии на кнопках, калькулятор стоимости по площади и поиск по разделу «Вопросы и ответы».
    Работает целиком в браузере: без сервера, без ИИ, введённый текст никуда не отправляется.
    DOM собирается только через createElement / textContent.
    ========================================================================== */
@@ -10,14 +10,18 @@
   var doc = document;
   var root = doc.documentElement;
 
-  // Базовые цены калькулятора, ₽. Основные значения — в content.json (chat.prices, правятся в админке).
+  // Базовые цены калькулятора, ₽ за единицу. Основные значения — в content.json
+  // (chat.prices и chat.units, правятся в админке).
   var PRICES = { build: 1000, repair: 500, landscaping: 300, concrete: 200 };
+  var UNITS = { build: 'кв.м.', repair: 'кв.м.', landscaping: 'кв.м.', concrete: 'куб.м.' };
   var SERVICES = [
-    { key: 'build', label: 'Строительство' },
-    { key: 'repair', label: 'Ремонт' },
-    { key: 'landscaping', label: 'Благоустройство' },
-    { key: 'concrete', label: 'Бетон' }
+    { key: 'build', label: 'Строительство', re: /(строит|постро|нов\S* дорог|проезд|площадк)/ },
+    { key: 'repair', label: 'Ремонт', re: /(ремонт|ямочн|фрез|яму|ямы)/ },
+    { key: 'landscaping', label: 'Благоустройство', re: /(благоустр|тротуар|парков|двор|плитк|дорожк)/ },
+    { key: 'concrete', label: 'Бетон', re: /(бетон)/ }
   ];
+  var PRESETS = [100, 500, 1000];
+  var AREA_MAX = 1000000;
   var DEFAULTS = {
     greeting: 'Здравствуйте! Я помощник компании «ДОРОЖНИК». Расскажу об услугах, примерно посчитаю стоимость работ и помогу оставить заявку.',
     priceNote: 'Это ориентир по базовым ставкам, а не публичная оферта. Точную стоимость назовём после оценки объекта.',
@@ -50,7 +54,10 @@
   var queue = Promise.resolve();
   var token = 0;       // «Начать заново» увеличивает — отложенные ответы старого диалога отбрасываются
   var hideTimer = 0;
-  var lastCalc = null; // услуги из последнего расчёта — подставляются в форму заявки
+  var lastCalc = null; // последний расчёт { key, area, total } — подставляется в форму заявки
+  var awaitArea = '';  // услуга, для которой ждём площадь в поле ввода
+  var areaUid = 0;
+  var placeholder = input.getAttribute('placeholder') || '';
 
   if (DZ) DZ.onContent(function (data) { content = data; });
 
@@ -87,28 +94,9 @@
     return node;
   }
   function p(kids) { return el('p', null, typeof kids === 'string' ? [kids] : kids); }
-  function checkIcon() {
-    var svg = doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('viewBox', '0 0 24 24');
-    svg.setAttribute('fill', 'none');
-    svg.setAttribute('stroke', 'currentColor');
-    svg.setAttribute('stroke-width', '3');
-    svg.setAttribute('stroke-linecap', 'round');
-    svg.setAttribute('stroke-linejoin', 'round');
-    svg.setAttribute('focusable', 'false');
-    var path = doc.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', 'm5 12 5 5 9-10');
-    svg.appendChild(path);
-    return svg;
-  }
 
   var nf = window.Intl && window.Intl.NumberFormat ? new window.Intl.NumberFormat('ru-RU') : null;
   function money(n) { return nf ? nf.format(n) : String(n); }
-  // «от 1 рубля», «от 21 рубля», но «от 11 рублей», «от 1 000 рублей»
-  function rub(n) {
-    var a = Math.abs(Math.round(n)) % 100;
-    return a % 10 === 1 && a !== 11 ? 'рубля' : 'рублей';
-  }
   function prices() {
     var src = get(content, 'chat.prices');
     var out = {};
@@ -118,14 +106,28 @@
     });
     return out;
   }
+  function unitOf(key) { return cfg('chat.units.' + key, UNITS[key] || 'кв.м.'); }
   function labelOf(key) {
     for (var i = 0; i < SERVICES.length; i++) if (SERVICES[i].key === key) return SERVICES[i].label;
     return key;
   }
+  // «500», «1 500», «1500,5 м2» → число; вне диапазона или не число — NaN
+  function parseArea(v) {
+    var m = /(\d[\d\s\u00a0]*(?:[.,]\d+)?)/.exec(str(v));
+    if (!m) return NaN;
+    var n = parseFloat(m[1].replace(/[\s\u00a0]/g, '').replace(',', '.'));
+    return n >= 1 && n <= AREA_MAX ? Math.round(n * 10) / 10 : NaN;
+  }
+  function calcComment(c) {
+    return 'Расчёт в чате: ' + labelOf(c.key) + ', ' + money(c.area) + ' ' + unitOf(c.key) + ', от ' + money(c.total) + ' ₽';
+  }
 
   // Синяя ссылка, плавно прокручивающая к секции сайта (обрабатывается ниже, в log click)
-  function link(text, target, task) {
-    return el('a', { 'class': 'chat-link', href: '#' + target, 'data-target': target, 'data-task': task || null, text: text });
+  function link(text, target, task, comment) {
+    return el('a', {
+      'class': 'chat-link', href: '#' + target, 'data-target': target,
+      'data-task': task || null, 'data-comment': comment || null, text: text
+    });
   }
   function telLink() {
     var href = cfg('contacts.phoneHref', DEFAULTS.phoneHref);
@@ -188,6 +190,7 @@
   function act(name, echo) {
     if (echo) userSay(echo);
     setQuick([]);
+    if (name !== 'area') waitArea('');
     (ACTIONS[name] || ACTIONS.menu)();
   }
 
@@ -234,8 +237,15 @@
 
     calc: function () {
       reply(function () {
-        return [p('Отметьте нужные работы — посчитаю ориентировочную стоимость:'), buildCalc()];
+        return [p('Выберите услугу — посчитаю ориентировочную стоимость по площади:'), buildPicker()];
       }, [BACK]);
+    },
+
+    // повторный ввод площади для последней выбранной услуги
+    area: function () {
+      var key = (lastCalc && lastCalc.key) || awaitArea;
+      if (!key) { ACTIONS.calc(); return; }
+      askArea(key);
     },
 
     contacts: function () {
@@ -261,10 +271,13 @@
 
     lead: function () {
       reply(function () {
-        var task = lastCalc && lastCalc.length === 1 ? lastCalc[0] : '';
+        var task = lastCalc ? lastCalc.key : '';
+        var note = lastCalc ? calcComment(lastCalc) : '';
         return [
-          p('Оставьте имя и телефон в форме заявки — перезвоним в рабочее время и уточним задачу.'),
-          p([link('Перейти к форме заявки', 'request', task)]),
+          p(lastCalc
+            ? 'Оставьте имя и телефон в форме заявки — ваш расчёт уже будет в комментарии. Перезвоним в рабочее время.'
+            : 'Оставьте имя и телефон в форме заявки — перезвоним в рабочее время и уточним задачу.'),
+          p([link('Перейти к форме заявки', 'request', task, note)]),
           p(['Срочно? Позвоните: ', telLink(), '.'])
         ];
       }, [{ label: 'Рассчитать стоимость', act: 'calc' }, BACK]);
@@ -289,69 +302,102 @@
   };
 
   /* ------------------------------------------------------------------
-     Калькулятор: сумма базовых цен выбранных услуг
+     Калькулятор: услуга → площадь → цена за единицу × площадь
      ------------------------------------------------------------------ */
   function freezeCalcs() {
-    Array.prototype.forEach.call(log.querySelectorAll('.calc button'), function (b) { b.disabled = true; });
+    Array.prototype.forEach.call(log.querySelectorAll('.calc button, .calc input'), function (b) { b.disabled = true; });
+  }
+  function waitArea(key) {
+    awaitArea = key;
+    input.setAttribute('placeholder', key ? 'Площадь, ' + unitOf(key) + ' — например, 500' : placeholder);
+    input.setAttribute('inputmode', key ? 'decimal' : 'text');
   }
 
-  function buildCalc() {
+  // Шаг 1: выбор услуги
+  function buildPicker() {
     freezeCalcs(); // старые карточки расчёта в истории — только для чтения
     var pr = prices();
-    var box = el('div', { 'class': 'calc', role: 'group', 'aria-label': 'Виды работ для расчёта' });
-    var sum = el('p', { 'class': 'calc-sum', 'aria-live': 'polite' });
-    var opts = SERVICES.map(function (s) {
-      var b = el('button', { type: 'button', 'class': 'calc-opt', 'aria-pressed': 'false', 'data-key': s.key }, [
-        el('span', { 'class': 'calc-box', 'aria-hidden': 'true' }, [checkIcon()]),
+    var box = el('div', { 'class': 'calc', role: 'group', 'aria-label': 'Услуга для расчёта' });
+    SERVICES.forEach(function (s) {
+      var b = el('button', { type: 'button', 'class': 'calc-opt', 'data-key': s.key }, [
         el('span', { 'class': 'calc-label', text: s.label }),
-        el('small', { text: 'от ' + money(pr[s.key]) + ' ₽' })
+        el('small', { text: 'от ' + money(pr[s.key]) + ' ₽ за ' + unitOf(s.key) })
       ]);
       b.addEventListener('click', function () {
-        b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'));
-        update();
+        freezeCalcs();
+        b.setAttribute('aria-pressed', 'true');
+        userSay(s.label);
+        setQuick([]);
+        askArea(s.key);
       });
       box.appendChild(b);
-      return b;
     });
-    var go = el('button', { type: 'button', 'class': 'btn btn-primary calc-go', text: 'Показать итог' });
+    return box;
+  }
 
-    function chosen() {
-      return opts.filter(function (b) { return b.getAttribute('aria-pressed') === 'true'; })
-        .map(function (b) { return b.getAttribute('data-key'); });
-    }
-    function total(keys) { return keys.reduce(function (s, k) { return s + pr[k]; }, 0); }
-    function update() {
-      var keys = chosen();
-      sum.textContent = '';
-      if (!keys.length) {
-        sum.appendChild(doc.createTextNode('Выберите хотя бы одну услугу.'));
+  // Шаг 2: площадь — поле в карточке, быстрые варианты или обычное поле чата
+  function askArea(key) {
+    waitArea(key);
+    reply(function () {
+      return [p('Какой объём работ? Укажите в ' + unitOf(key) + ' — можно ввести и в поле внизу.'), buildArea(key)];
+    }, [{ label: 'Другая услуга', act: 'calc' }, BACK]);
+  }
+  function buildArea(key) {
+    freezeCalcs();
+    var id = 'calcArea' + (++areaUid);
+    var field = el('input', {
+      'class': 'calc-input', id: id, type: 'number', inputmode: 'decimal', min: '1', max: String(AREA_MAX),
+      step: 'any', placeholder: 'Например, 500', 'aria-describedby': id + '-hint'
+    });
+    var hint = el('p', { 'class': 'calc-hint', id: id + '-hint', 'aria-live': 'polite', text: 'Единица: ' + unitOf(key) });
+    var go = el('button', { type: 'button', 'class': 'btn btn-primary calc-go', text: 'Рассчитать' });
+    var presets = el('div', { 'class': 'calc-presets' }, PRESETS.map(function (n) {
+      var b = el('button', { type: 'button', 'class': 'calc-chip', 'aria-label': money(n) + ' ' + unitOf(key), text: money(n) });
+      b.addEventListener('click', function () { field.value = String(n); submit(); });
+      return b;
+    }));
+    function submit() {
+      var area = parseArea(field.value);
+      if (isNaN(area)) {
+        hint.textContent = typo('Введите число от 1 до ' + money(AREA_MAX) + ' ' + unitOf(key) + '.');
+        hint.classList.add('is-err');
+        field.focus();
         return;
       }
-      var t = total(keys);
-      sum.appendChild(doc.createTextNode('Примерная стоимость: '));
-      sum.appendChild(el('strong', { text: 'от ' + money(t) + ' ' + rub(t) }));
+      showResult(key, area, true);
     }
-    go.addEventListener('click', function () {
-      var keys = chosen();
-      if (!keys.length) { update(); opts[0].focus(); return; }
-      freezeCalcs();
-      lastCalc = keys;
-      var t = total(keys);
-      userSay(keys.map(labelOf).join(', '));
-      setQuick([]);
-      reply(function () {
-        return [
-          p(['Примерная стоимость: ', el('strong', { text: 'от ' + money(t) + ' ' + rub(t) }), '.']),
-          p(cfg('chat.priceNote', DEFAULTS.priceNote)),
-          p([link('Оставить заявку на точный расчёт', 'request', keys.length === 1 ? keys[0] : '')])
-        ];
-      }, [{ label: 'Оставить заявку', act: 'lead', accent: true }, { label: 'Пересчитать', act: 'calc' }, BACK]);
+    go.addEventListener('click', submit);
+    field.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); submit(); }
     });
+    return el('div', { 'class': 'calc', role: 'group', 'aria-label': 'Объём работ: ' + labelOf(key) }, [
+      el('label', { 'class': 'calc-field', 'for': id }, [
+        el('span', { 'class': 'sr', text: 'Объём, ' + unitOf(key) }),
+        field,
+        el('span', { 'class': 'calc-unit', 'aria-hidden': 'true', text: unitOf(key) })
+      ]),
+      hint, presets, go
+    ]);
+  }
 
-    box.appendChild(sum);
-    box.appendChild(go);
-    update();
-    return box;
+  // Шаг 3: итог и переход к заявке с подставленным расчётом
+  function showResult(key, area, echo) {
+    freezeCalcs();
+    waitArea('');
+    var price = prices()[key];
+    var total = Math.round(price * area);
+    lastCalc = { key: key, area: area, total: total };
+    var note = calcComment(lastCalc);
+    if (echo) userSay(money(area) + ' ' + unitOf(key));
+    setQuick([]);
+    reply(function () {
+      return [
+        p(['Примерная стоимость для ' + money(area) + ' ' + unitOf(key) + ': ', el('strong', { text: 'от ' + money(total) + ' ₽' })]),
+        p(labelOf(key) + ': базовая ставка от ' + money(price) + ' ₽ за ' + unitOf(key).replace(/\.?$/, '.')),
+        p(cfg('chat.priceNote', DEFAULTS.priceNote)),
+        p([link('Оставить заявку с этим расчётом', 'request', key, note)])
+      ];
+    }, [{ label: 'Оставить заявку', act: 'lead', accent: true }, { label: 'Другая площадь', act: 'area' }, { label: 'Другая услуга', act: 'calc' }, BACK]);
   }
 
   /* ------------------------------------------------------------------
@@ -410,9 +456,24 @@
     return '';
   }
 
+  function serviceIn(n) {
+    for (var i = 0; i < SERVICES.length; i++) if (SERVICES[i].re.test(n)) return SERVICES[i].key;
+    return '';
+  }
   function answer(text) {
     var n = norm(text);
+    // ждём площадь: «500», «1 500 м2», «около 300 квадратов»
+    if (awaitArea && !isNaN(parseArea(text))) { showResult(awaitArea, parseArea(text), false); return; }
+    // после расчёта просто число — пересчитать для той же услуги
+    if (lastCalc && /^[\d\s.,]+(м2|м 2|м3|м 3|кв м|куб м|кв|м)?$/.test(n) && !isNaN(parseArea(text))) { showResult(lastCalc.key, parseArea(text), false); return; }
     var pre = matchIntent(PRE, n);
+    if (pre === 'calc') {
+      // «сколько стоит ремонт 300 м2» — сразу считаем; без площади — спрашиваем её
+      var key = serviceIn(n);
+      var area = /(м2|м 2|кв|квадрат|метр|м3|куб|площад|\d м(?=\s|$))/.test(n) ? parseArea(text) : NaN;
+      if (key && !isNaN(area)) { showResult(key, area, false); return; }
+      if (key) { askArea(key); return; }
+    }
     if (pre) { ACTIONS[pre](); return; }
     var faq = findFaq(text);
     if (faq) {
@@ -441,7 +502,9 @@
     e.preventDefault();
     var target = a.getAttribute('data-target');
     var task = a.getAttribute('data-task');
+    var comment = a.getAttribute('data-comment');
     if (task && DZ) DZ.prefillTask(task);
+    if (comment && DZ && DZ.prefillComment) DZ.prefillComment(comment);
     if (smallMq.matches) close(false);
     if (DZ) DZ.scrollToId(target);
     else {
@@ -453,7 +516,10 @@
   /* ------------------------------------------------------------------
      Открытие и закрытие окна
      ------------------------------------------------------------------ */
-  function syncLock() { root.classList.toggle('chat-locked', isOpen && smallMq.matches); }
+  function syncLock() {
+    root.classList.toggle('chat-locked', isOpen && smallMq.matches);
+    root.classList.toggle('chat-open', isOpen); // прячет мобильную панель «Позвонить / Заявка»
+  }
 
   function open() {
     if (isOpen) return;
@@ -489,6 +555,7 @@
     log.textContent = '';
     setQuick([]);
     lastCalc = null;
+    waitArea('');
     act('greet');
     input.focus();
   }

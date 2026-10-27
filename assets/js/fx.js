@@ -1,6 +1,7 @@
 /* ==========================================================================
    Эффекты сайта ДОРОЖНИК: прогресс прокрутки, параллакс, магнитные кнопки,
-   подсветка карточек, наклон фото и отложенная загрузка 3D-сцены.
+   подсветка и 3D-наклон карточек, кастомный курсор, наклон фото
+   и отложенная загрузка 3D-сцены с прелоадером.
    При prefers-reduced-motion движение выключено; на сенсорных экранах
    остаются только лёгкие эффекты.
    ========================================================================== */
@@ -70,7 +71,7 @@
   if (window.DZ) window.DZ.onContent(initParallax);
 
   /* ------------------------------------------------------------------
-     Магнитные кнопки и подсветка карточек за курсором
+     Магнитные кнопки, подсветка и 3D-наклон карточек за курсором
      ------------------------------------------------------------------ */
   if (fine) {
     var magnet = null;
@@ -79,6 +80,26 @@
     var px = 0;
     var py = 0;
     var spotFrame = 0;
+    var tiltCard = null;
+    var tiltFrame = 0;
+
+    var releaseTilt = function () {
+      if (!tiltCard) return;
+      tiltCard.classList.remove('is-tilt');
+      tiltCard.classList.add('is-untilt');
+      tiltCard.style.removeProperty('--rx');
+      tiltCard.style.removeProperty('--ry');
+      tiltCard = null;
+    };
+    var paintTiltCard = function () {
+      tiltFrame = 0;
+      if (!tiltCard) return;
+      var r = tiltCard.getBoundingClientRect();
+      var x = Math.min(1, Math.max(0, (px - r.left) / r.width));
+      var y = Math.min(1, Math.max(0, (py - r.top) / r.height));
+      tiltCard.style.setProperty('--rx', ((0.5 - y) * 7).toFixed(2) + 'deg');
+      tiltCard.style.setProperty('--ry', ((x - 0.5) * 9).toFixed(2) + 'deg');
+    };
 
     var releaseMagnet = function () {
       if (magnet) magnet.style.translate = '';
@@ -115,9 +136,86 @@
 
       spot = t.closest('.spot');
       if (spot && !spotFrame) spotFrame = window.requestAnimationFrame(paintSpot);
+
+      if (motion) {
+        var card = t.closest('[data-tilt]');
+        if (card !== tiltCard) {
+          releaseTilt();
+          if (card) {
+            tiltCard = card;
+            card.classList.remove('is-untilt');
+            card.classList.add('is-tilt');
+          }
+        }
+        if (tiltCard && !tiltFrame) tiltFrame = window.requestAnimationFrame(paintTiltCard);
+      }
     }, { passive: true });
-    doc.addEventListener('pointerout', function (e) { if (!e.relatedTarget) releaseMagnet(); });
+    doc.addEventListener('pointerout', function (e) { if (!e.relatedTarget) { releaseMagnet(); releaseTilt(); } });
     window.addEventListener('scroll', releaseMagnet, { passive: true });
+  }
+
+  /* ------------------------------------------------------------------
+     Кастомный курсор: точка с инерцией и кольцо; над карточками
+     кольцо раскрывается с подписью из data-cursor («Смотреть», «Тяните»)
+     ------------------------------------------------------------------ */
+  if (motion) {
+    var dot = doc.createElement('div');
+    var ring = doc.createElement('div');
+    var ringLabel = doc.createElement('span');
+    dot.className = 'cursor';
+    ring.className = 'cursor-ring';
+    dot.setAttribute('aria-hidden', 'true');
+    ring.setAttribute('aria-hidden', 'true');
+    ring.appendChild(doc.createElement('i'));
+    ring.appendChild(ringLabel);
+    doc.body.appendChild(dot);
+    doc.body.appendChild(ring);
+    root.classList.add('has-cursor');
+
+    var cur = { x: -100, y: -100, dx: -100, dy: -100, rx: -100, ry: -100, raf: 0, mode: '' };
+    var NATIVE = 'input, textarea, select, .map-view, .chat-panel, dialog, iframe';
+    var LINK = 'a[href], button, summary, label, [role="tab"]';
+    var moveCursor = function () {
+      cur.raf = 0;
+      cur.dx += (cur.x - cur.dx) * 0.42;
+      cur.dy += (cur.y - cur.dy) * 0.42;
+      cur.rx += (cur.x - cur.rx) * 0.16;
+      cur.ry += (cur.y - cur.ry) * 0.16;
+      dot.style.transform = 'translate3d(' + cur.dx.toFixed(1) + 'px,' + cur.dy.toFixed(1) + 'px,0)';
+      ring.style.transform = 'translate3d(' + cur.rx.toFixed(1) + 'px,' + cur.ry.toFixed(1) + 'px,0)';
+      // цикл живёт, пока кольцо догоняет курсор
+      if (Math.abs(cur.x - cur.rx) + Math.abs(cur.y - cur.ry) > 0.3) cur.raf = window.requestAnimationFrame(moveCursor);
+    };
+    var setMode = function (mode, label) {
+      if (mode === cur.mode && ringLabel.textContent === label) return;
+      cur.mode = mode;
+      ring.classList.toggle('is-view', mode === 'view');
+      ring.classList.toggle('is-link', mode === 'link');
+      ringLabel.textContent = label || '';
+    };
+    doc.addEventListener('pointermove', function (e) {
+      if (e.pointerType && e.pointerType !== 'mouse') return;
+      var t = e.target && e.target.closest ? e.target : null;
+      var native = t && t.closest(NATIVE);
+      dot.classList.toggle('is-on', !native);
+      ring.classList.toggle('is-on', !native);
+      if (cur.x < -50) { cur.dx = cur.rx = e.clientX; cur.dy = cur.ry = e.clientY; }
+      cur.x = e.clientX;
+      cur.y = e.clientY;
+      if (t && !native) {
+        var view = t.closest('[data-cursor]');
+        if (view) setMode('view', view.getAttribute('data-cursor'));
+        else setMode(t.closest(LINK) ? 'link' : '', '');
+      }
+      if (!cur.raf) cur.raf = window.requestAnimationFrame(moveCursor);
+    }, { passive: true });
+    doc.addEventListener('pointerdown', function () { ring.classList.add('is-down'); }, { passive: true });
+    doc.addEventListener('pointerup', function () { ring.classList.remove('is-down'); }, { passive: true });
+    doc.addEventListener('pointerout', function (e) {
+      if (e.relatedTarget) return;
+      dot.classList.remove('is-on');
+      ring.classList.remove('is-on');
+    });
   }
 
   /* ------------------------------------------------------------------
@@ -157,9 +255,11 @@
   function remember3dOff() {
     try { window.sessionStorage.setItem('dz_fx3d', 'off'); } catch (err) { /* хранилище недоступно */ }
   }
+  // прелоадер в области сцены: убирается, когда 3D готово, не запустилось или грузится слишком долго
+  function done3d() { root.classList.add('fx-done'); }
   function start3d() {
     var host = doc.getElementById('heroCanvas');
-    if (!root.classList.contains('fx3d') || !host) return;
+    if (!root.classList.contains('fx3d') || !host) { done3d(); return; }
     // WebGL без программной эмуляции? Проверяем до загрузки библиотеки (~120 КБ)
     var ok = false;
     try {
@@ -170,7 +270,8 @@
       var lose = gl && gl.getExtension('WEBGL_lose_context');
       if (lose) lose.loseContext();
     } catch (err) { ok = false; }
-    if (!ok) { remember3dOff(); return; }
+    if (!ok) { remember3dOff(); done3d(); return; }
+    window.setTimeout(function () { if (!root.classList.contains('fx-ready')) done3d(); }, 12000);
 
     window.DZFX = {
       hero: {
@@ -181,6 +282,7 @@
         onReady: function () { root.classList.add('fx-ready'); },
         onFail: function (reason) {
           remember3dOff();
+          done3d();
           // «slow» — последний кадр остаётся на холсте как статичная картинка; иначе — постер
           if (reason !== 'slow') root.classList.remove('fx-ready');
         }
@@ -189,11 +291,26 @@
     var s = doc.createElement('script');
     s.type = 'module';
     s.src = 'assets/js/hero3d.js';
+    s.onerror = done3d;
     doc.head.appendChild(s);
   }
-  function schedule3d() {
+  function idle3d() {
     if ('requestIdleCallback' in window) window.requestIdleCallback(start3d, { timeout: 2500 });
     else window.setTimeout(start3d, 600);
+  }
+  // На телефонах и планшетах сцена стартует с первым касанием или прокруткой:
+  // до этого виден постер того же сюжета, а загрузка страницы не тормозит
+  function schedule3d() {
+    if (!root.classList.contains('fx-lite')) { idle3d(); return; }
+    var kicked = false;
+    var events = ['pointerdown', 'touchstart', 'scroll', 'wheel', 'keydown'];
+    var kick = function () {
+      if (kicked) return;
+      kicked = true;
+      events.forEach(function (t) { window.removeEventListener(t, kick, true); });
+      idle3d();
+    };
+    events.forEach(function (t) { window.addEventListener(t, kick, { passive: true, capture: true }); });
   }
   if (root.classList.contains('fx3d')) {
     if (doc.readyState === 'complete') schedule3d();
